@@ -97,7 +97,7 @@ export function useCustomers() {
     const { v4: uuidv4 } = require('uuid');
     const newCustomer: ZellerCustomer = {
       ...customer,
-      id: uuidv4(),
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
     };
     await db.insertCustomer(newCustomer);
     await loadCustomers();

@@ -27,23 +27,36 @@ export default function AddScreen() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async () => {
-    const validationErrors = validateCustomerForm({ firstName, lastName, email, role });
-    setErrors(validationErrors);
+const handleSubmit = async () => {
+  try {
+    const id = Date.now().toString();
+    const fullName = `${firstName} ${lastName}`.trim();
 
-    if (Object.keys(validationErrors).length > 0) return;
-
-    setSubmitting(true);
-    try {
-      const name = `${firstName.trim()} ${lastName.trim()}`.trim();
-      await addCustomer({ name, email: email.trim(), role });
-      router.back();
-    } catch (e) {
-      Alert.alert('Error', 'Failed to create user');
-    } finally {
-      setSubmitting(false);
+    if (!firstName || !lastName) {
+      console.log('First and Last name required');
+      return;
     }
-  };
+
+    console.log('DATA BEFORE INSERT:', {
+      id,
+      fullName,
+      email,
+      role,
+    });
+
+    await addCustomer({   // ✅ use hook (recommended)
+      id,
+      name: fullName,
+      email,
+      role, // ✅ REQUIRED FIELD
+    });
+
+    console.log('USER CREATED');
+
+  } catch (e) {
+    console.log('CREATE FAILED:', e);
+  }
+};
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
